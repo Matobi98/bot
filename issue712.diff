@@ -1,0 +1,249 @@
+diff --git a/bot/ordersActions.ts b/bot/ordersActions.ts
+index 8d63263..951c12e 100644
+--- a/bot/ordersActions.ts
++++ b/bot/ordersActions.ts
+@@ -203,7 +203,6 @@ const buildDescription = (
+   }: BuildDescriptionArguments,
+ ) => {
+   try {
+-    const action = type === 'sell' ? i18n.t('selling') : i18n.t('buying');
+     const hashtag = `#${type.toUpperCase()}${fiatCode}\n`;
+     const paymentAction =
+       type === 'sell' ? i18n.t('receive_payment') : i18n.t('pay');
+@@ -211,9 +210,6 @@ const buildDescription = (
+     const volume = numberFormat(fiatCode, user.volume_traded);
+     const totalRating = user.total_rating;
+     const totalReviews = user.total_reviews;
+-    const username = user.show_username
+-      ? `@${user.username} ` + i18n.t('is') + ` `
+-      : ``;
+     const volumeTraded = user.show_volume_traded
+       ? i18n.t('trading_volume', { volume }) + `\n`
+       : ``;
+@@ -251,8 +247,10 @@ const buildDescription = (
+ 
+     const ageInDays = getUserAge(user);
+ 
+-    let description =
+-      `${username}${action} ${amountText}` + i18n.t('sats') + `\n`;
++    const firstLine = getOrderTitleMessage(user, type, i18n);
++
++    let description: string =
++      `${firstLine}\n`;
+     description += i18n.t('for') + ` ${currencyString}\n`;
+     description += `${paymentAction} ` + i18n.t('by') + ` ${paymentMethod}\n`;
+     description += i18n.t('has_successful_trades', { trades }) + `\n`;
+@@ -268,6 +266,22 @@ const buildDescription = (
+   }
+ };
+ 
++const getOrderTitleMessage = (user: UserDocument, type: string, i18n: I18nContext) => {
++  const isSell = type === 'sell';
++
++  // Guard Clause: The user DOES want to show their name, we resolve and leave.
++  if (user.show_username) {
++    return isSell
++      ? i18n.t('showusername_selling_sats', { username: user.username })
++      : i18n.t('showusername_buying_sats', { username: user.username });
++  }
++
++  // The user DOES NOT want to show their name.
++  return isSell
++    ? i18n.t('selling_sats')
++    : i18n.t('buying_sats');
++};
++
+ const getOrder = async (
+   ctx: MainContext,
+   user: UserDocument,
+diff --git a/locales/de.yaml b/locales/de.yaml
+index 1f64780..02690d7 100644
+--- a/locales/de.yaml
++++ b/locales/de.yaml
+@@ -433,9 +433,11 @@ pending_payment_failed_to_admin: |
+   Die Bezahlung der LN-Rechnung für den Auftrag ${orderId} des Benutzers @${username} ist fehlgeschlagen.
+ 
+   Zahlungsversuche: ${attempts}
+-selling: Verkaufe
+-buying: Kaufe
++selling_sats: Verkaufe Sats
++buying_sats: Kaufe Sats
+ receive_payment: Zahlung erhalten
++showusername_buying_sats: '@${username} kauft Sats'
++showusername_selling_sats: '@${username} verkauft Sats'
+ pay: Bezahlen
+ is: ist
+ trading_volume: 'Handelsvolumen: ${Volumen} Sats'
+diff --git a/locales/en.yaml b/locales/en.yaml
+index 3d88602..f912bf1 100644
+--- a/locales/en.yaml
++++ b/locales/en.yaml
+@@ -439,8 +439,10 @@ pending_payment_failed_to_admin: |
+   Payment of the invoice for the Buy order ${orderId} of user @${username} has failed.
+ 
+   Payment attempts: ${attempts}
+-selling: Selling
+-buying: Buying
++selling_sats: Selling sats
++buying_sats: Buying sats
++showusername_selling_sats: '@${username} is selling sats'
++showusername_buying_sats: '@${username} is buying sats'
+ receive_payment: Receive payment
+ pay: Pay
+ is: is
+diff --git a/locales/es.yaml b/locales/es.yaml
+index 02715af..04b3cb6 100644
+--- a/locales/es.yaml
++++ b/locales/es.yaml
+@@ -434,8 +434,10 @@ pending_payment_failed_to_admin: |
+   El pago a la invoice de la compra Id: ${orderId} del usuario @${username} ha fallado!
+ 
+   Intento de pago: ${attempts}
+-selling: Vendiendo
+-buying: Comprando
++selling_sats: Vendiendo sats
++buying_sats: Comprando sats
++showusername_buying_sats: '@${username} está comprando sats'
++showusername_selling_sats: '@${username} está vendiendo sats'
+ receive_payment: Recibo pago
+ pay: Pago
+ is: está
+diff --git a/locales/fa.yaml b/locales/fa.yaml
+index 3153077..fe8e1c2 100644
+--- a/locales/fa.yaml
++++ b/locales/fa.yaml
+@@ -433,12 +433,14 @@ pending_payment_failed_to_admin: |
+   پرداخت فاکتور سفارش خرید ${orderId} کاربر @${username} انجام نشد.
+ 
+   Payment attempts: ${attempts}
+-selling: فروش
+-buying: خرید
++selling_sats: فروش ساتوشی
++buying_sats: خرید ساتوشی
+ receive_payment: دریافت وجه
+ pay: پرداخت
+ is: هست
+ trading_volume: 'حجم معاملات: ${volume} sat'
++showusername_buying_sats: '@${username} در حال خرید ساتوشی است'
++showusername_selling_sats: '@${username} در حال فروش ساتوشی است'
+ satoshis: ساتوشی‌ها
+ by: توسط
+ rate: نرخ
+diff --git a/locales/fr.yaml b/locales/fr.yaml
+index 15b4fe8..98a22ab 100644
+--- a/locales/fr.yaml
++++ b/locales/fr.yaml
+@@ -432,9 +432,11 @@ pending_payment_failed_to_admin: |
+   Le paiement de la facture pour l'offre d'achat ${orderId} de l'utilisateur @${username} a échoué.
+ 
+   Tentatives de paiement : ${attempts}
+-selling: Vente
+-buying: Achat
++selling_sats: Vente de sats
++buying_sats: Achat de sats
+ receive_payment: Réception du paiement
++showusername_buying_sats: "@${username} achète des sats"
++showusername_selling_sats: "@${username} vent des sats"
+ pay: Payer
+ is: est
+ trading_volume: 'Volume de transactions : ${volume} sats'
+diff --git a/locales/it.yaml b/locales/it.yaml
+index 60043fe..7ccebf4 100644
+--- a/locales/it.yaml
++++ b/locales/it.yaml
+@@ -430,12 +430,14 @@ pending_payment_failed_to_admin: |
+   Il pagamento della invoice per l'ordine di acquisto ${orderId} dell'utente @${username} è fallito.
+ 
+   Payment attempts: ${attempts}
+-selling: Vendita
+-buying: Acquisto
++selling_sats: Vendita sats
++buying_sats: Acquisto sats
+ receive_payment: Ricezione del pagamento
+ pay: Paga
+ is: è
+ trading_volume: 'Volume scambio: ${volume} sats'
++showusername_buying_sats: '@${username} sta comprando sats'
++showusername_selling_sats: '@${username} sta vendendo sats'
+ satoshis: satoshi
+ by: da
+ rate: Valutazione
+diff --git a/locales/ko.yaml b/locales/ko.yaml
+index ce324ad..da04b01 100644
+--- a/locales/ko.yaml
++++ b/locales/ko.yaml
+@@ -430,12 +430,14 @@ pending_payment_failed_to_admin: |
+   
+   결제 시도 횟수: ${attempts}
+ 
+-selling: 팝니다
+-buying: 삽니다
++selling_sats: sats 판매
++buying_sats: sats 구매
+ receive_payment: 입금
+ pay: 결제
+ is: is
+ trading_volume: '거래량: ${volume} sats'
++showusername_buying_sats: '@${username} 님이 sats를 구매합니다'
++showusername_selling_sats: '@${username} 님이 sats를 판매합니다'
+ satoshis: 사토시
+ by: 방법 - 
+ rate: 환율
+diff --git a/locales/pt.yaml b/locales/pt.yaml
+index bd3a5fa..61d3b83 100644
+--- a/locales/pt.yaml
++++ b/locales/pt.yaml
+@@ -432,10 +432,12 @@ pending_payment_failed_to_admin: |
+   Pagamento da fatura para o pedido de compra ${orderId} de usuário @${username} falhou.
+ 
+   Tentativas de pagamento: ${attempts}
+-selling: Vendendo
+-buying: Comprando
++selling_sats: Vendendo sats
++buying_sats: Comprando sats
+ receive_payment: Receber pagamento
+ pay: Pagar
++showusername_buying_sats: '@${username} está comprando sats'
++showusername_selling_sats: '@${username} está vendendo sats'
+ is: é
+ trading_volume: 'Volume de negócios: ${volume} sats'
+ satoshis: satoshis
+diff --git a/locales/ru.yaml b/locales/ru.yaml
+index dea0cd9..a838f3a 100644
+--- a/locales/ru.yaml
++++ b/locales/ru.yaml
+@@ -433,9 +433,11 @@ pending_payment_failed_to_admin: |
+   Платеж по счету-фактуре на покупку с идентификатором ${orderId} пользователя @${username} не выполнен!
+ 
+   Попытка оплаты: ${attempts}
+-selling: Продаю
+-buying: Покупаю
++selling_sats: Продажа сат
++buying_sats: Покупка сат
+ receive_payment: Расчет
++showusername_buying_sats: '@${username} покупает саты'
++showusername_selling_sats: '@${username} продает саты'
+ pay: Расчет
+ is: Я
+ trading_volume: 'Обьем торгов: ${volume} сат'
+diff --git a/locales/uk.yaml b/locales/uk.yaml
+index 40e76f3..f0352a0 100644
+--- a/locales/uk.yaml
++++ b/locales/uk.yaml
+@@ -430,12 +430,14 @@ pending_payment_failed_to_admin: |
+   Платіж за рахунком-фактурою на покупку з ідентифікатором ${orderId} користувача @${username} не виконаний!
+ 
+   Спроб оплати: ${attempts}
+-selling: Продаю
+-buying: Купую
++selling_sats: Продаж сатоші
++buying_sats: Купівля сатоші
+ receive_payment: Розрахунок
+ pay: Оплата
+ is: є
+ trading_volume: 'Обсяг торгів: ${volume} сат'
++showusername_buying_sats: '@${username} купує сатоші'
++showusername_selling_sats: '@${username} продає сатоші'
+ satoshis: сатоші
+ by: за допомогою
+ rate: Kурс
