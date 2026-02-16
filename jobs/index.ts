@@ -8,6 +8,7 @@ import calculateEarnings from './calculate_community_earnings';
 import deleteCommunity from './communities';
 import nodeInfo from './node_info';
 import checkSolvers from './check_solvers';
+import hartbeat from './hartbeat';
 
 export {
   attemptPendingPayments,
@@ -18,4 +19,5 @@ export {
   deleteCommunity,
   nodeInfo,
   checkSolvers,
+  hartbeat,
 };

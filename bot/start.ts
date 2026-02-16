@@ -70,6 +70,7 @@ import {
   // deleteCommunity,
   nodeInfo,
   checkSolvers,
+  hartbeat,
 } from '../jobs';
 import { logger } from '../logger';
 import { IUsernameId } from '../models/community';
@@ -229,6 +230,10 @@ const initialize = (
 
   schedule.scheduleJob(`* * * * *`, async () => {
     await nodeInfo(bot);
+  });
+
+  schedule.scheduleJob(`*/${process.env.HARTBEAT_TIME_MINUTES || '1'} * * * *`, async () => {
+    await hartbeat(bot);
   });
 
   schedule.scheduleJob(`0 0 * * *`, async () => {
