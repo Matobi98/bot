@@ -676,3 +676,16 @@ user_taker_is_blocked_by_user_order: You can't take this order because its maker
 check_solvers: Your community ${communityName} does not have any solvers. Please add at least one within ${remainingDays} days to prevent the community from being disabled.
 check_solvers_last_warning: Your community ${communityName} does not have any solvers. Please add at least one today to prevent the community from being disabled.
 image_processing_error: We had an error processing the image, please wait few minutes and try again
+
+# templates
+no_templates: "You have no templates yet. Create one!"
+templates_list: "Your templates:"
+template_published: "✅ Order published from template!"
+template_saved: "✅ Template saved."
+template_deleted: "🗑 Template deleted."
+confirm_delete_template: "Delete this template?"
+enter_template_type: "Choose order type:"
+template_summary: "Template summary:\nType: {{type}}\nCurrency: {{fiatCode}}\nAmount: {{fiatAmount}}\nPrice: {{priceMode}}\nMargin: {{margin}}%\nPayment: {{paymentMethod}}"
+publishtemplate_usage: "Usage: /publishtemplate <number>"
+template_not_found: "Template not found."
+create_new_template: "Create new template"

@@ -673,3 +673,16 @@ user_taker_is_blocked_by_user_order: No puedes aceptar esta oferta porque su cre
 image_processing_error: Hemos tenido un error procesando la imagen, por favor espera unos minutos y vuelve a intentarlo.
 check_solvers: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno dentro de ${remainingDays} días para evitar que se deshabilite la comunidad.
 check_solvers_last_warning: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno hoy para evitar que la comunidad quede inhabilitada.
+
+# templates
+no_templates: "No tienes plantillas aún. ¡Crea una!"
+templates_list: "Tus plantillas:"
+template_published: "✅ ¡Orden publicada desde la plantilla!"
+template_saved: "✅ Plantilla guardada."
+template_deleted: "🗑 Plantilla eliminada."
+confirm_delete_template: "¿Eliminar esta plantilla?"
+enter_template_type: "Elige el tipo de orden:"
+template_summary: "Resumen de la plantilla:\nTipo: {{type}}\nMoneda: {{fiatCode}}\nMonto: {{fiatAmount}}\nPrecio: {{priceMode}}\nMargen: {{margin}}%\nPago: {{paymentMethod}}"
+publishtemplate_usage: "Uso: /publishtemplate <número>"
+template_not_found: "Plantilla no encontrada."
+create_new_template: "Crear nueva plantilla"
